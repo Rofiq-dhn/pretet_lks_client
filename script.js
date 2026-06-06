@@ -354,7 +354,7 @@ function loadData() {
             nextConnId = data.nextConnId || 1;
             offsetX = data.offsetX || 1;
             offsetY = data.offsetY || 1;
-        } catch(e) {
+        } catch (e) {
 
         }
     }
@@ -368,8 +368,118 @@ canvas.addEventListener("dblclick", (e) => {
     const scaley = canvas.height / rect.height;
 
     const mouseX = (e.clientX - rect.left) * scaleX;
-    const mouseY= (e.clientY - rect.top) * scaleY;
+    const mouseY = (e.clientY - rect.top) * scaleY;
 
     tempNewPoint = canvasToWorld(mouseX, mouseY);
 
+    if (
+        tempNewPoint.x >= 0 && tempNewPoint.x <= IMG_WIDTH &&
+        tempNewPoint.y >= 0 && tempNewPoint.y <= IMG_HEIGHT
+    ) {
+        document.getElementById("popupTambah").classList.remove("hidden");
+        document.getElementById("namaLokasi").focus();
+    }
 });
+
+document.getElementById("btnTambah").onclick = () => {
+    const name = getElementById("namaLokasi").value.trim();
+    if (name && tempNewPoint) {
+        point.push({
+            id: nextPointId++,
+            name: name,
+            x: tempNewPoint.x,
+            y: tempNewPoint.y
+        });
+        saveData();
+        draw();
+        updateRouteDropDown();
+    }
+
+    document.getElementById("popupTambah").classList.add("hidden");
+    document.getElementById("namaLokasi").value = "";
+    tempNewPoint = null;
+}
+
+document.getElementById("btnBatal").onclick = () => {
+    document.getElementById("popupTambah").classList.add("hidden");
+    tempNewPoint = null;
+}
+
+document.getElementById("btnConnect").onclick = () => {
+    const distance = parseFloat(document.getElementById("inputJarak").value);
+    const mode = document.getElementById("inputMode").value;
+    const t = transport[mode];
+
+    if (isNaN(distance) || distance <= 0) {
+        alert("Masukkan Jarak yang valid");
+        return;
+    }
+
+    connections.push({
+        id: nextPointId++,
+        fromId: window.tempConnect.fromId,
+        toId: window.tempConnect.toId,
+        distance: distance,
+        mode: mode,
+        color: t.color,
+        speed: t.speed,
+        costPerKm: t.costPerKm
+    });
+
+    saveData();
+    draw();
+    updateRouteDropDown();
+
+    document.getElementById("popupConnect").classList.add("hidden");
+    document.getElementById("inputJarak").value = "";
+    window.tempNewPoint = null;
+}
+
+document.getElementById("btnBatalConnect").onclick = () => {
+    document.getElementById("popupTambah").classList.add("hidden");
+    tempNewPoint = null;
+}
+
+function updateRouteDropDown() {
+    function validate() {
+        const fromName = inputDari.value.trim().toLowerCase();
+        const toName = inputKe.value.trim().toLowerCase();
+
+        const fromExist = points.some(p => p.name.toLowerCase() === fromName);
+        const toExist = points.some(p => p.name.toLowerCase() === toName);
+
+        btnCari.disabled = !(fromExist && toExist && fromName !== toName)
+    }
+
+    inputDari.oninput = validate;
+    inputKe.oninput = validate;
+    validate();
+}
+
+function findAllRoutes(fromId, toId){
+    const route = [];
+
+    function dfs(currentId, targetId, visited, steps, totalDistance, totalCost, totalTime) {
+        if(currentId === targetId) {
+            route.push({ steps: [...steps], totalDistance, totalCost, totalTime});
+            return;
+        }
+
+    if(visited.size >= 5) return;
+
+    const neighbors = connections.filter(
+        c => c.fromId === currentId ? conn.toId : conn.fromId === currentId
+    );
+
+    for (let conn of neighbors) {
+        const nextId = conn.fromId === currentId ? conn.toId : conn.fromId;
+
+        if(!visited.has(nextId)) {
+            visited.add(nextId);
+
+            const t = transport[conn.mode];
+            const timeSegment = conn
+        }
+    }
+    }
+}
