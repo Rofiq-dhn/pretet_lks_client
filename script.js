@@ -12,9 +12,9 @@ let dragStartX = 0, dragStartY = 0,
 const IMG_WIDTH = 982;
 const IMG_HEIGHT = 450;
 const transport = {
-    train: {color: "#33E339", speed: 120, costPerKm: 500, name: "Kereta"},
-    train: {color: "#A83BE8", speed: 80, costPerKm: 100, name: "Bus"},
-    train: {color: "#000000", speed: 800, costPerKm: 1000, name: "Pesawat"}
+    train: { color: "#33E339", speed: 120, costPerKm: 500, name: "Kereta" },
+    train: { color: "#A83BE8", speed: 80, costPerKm: 100, name: "Bus" },
+    train: { color: "#000000", speed: 800, costPerKm: 1000, name: "Pesawat" }
 }
 const canvas = document.getElementById("mapCanvas");
 const ctx = canvas.getContext("2d");
@@ -29,7 +29,7 @@ const resetSemuaBtn = document.getElementById("resetSemuaBtn");
 const routeWindow = document.getElementById("routeWindow");
 const openRouteBtn = document.getElementById("openRouteBtn");
 const closeRouteBtn = document.getElementById("closeRouteBtn");
-const windowHeader  = document.getElementById("windowHeader");
+const windowHeader = document.getElementById("windowHeader");
 
 let bgImage = null;
 
@@ -44,7 +44,7 @@ window.addEventListener("resize", resizeCanvas);
 
 resizeCanvas();
 
-function worldToCanvas(x,y) {
+function worldToCanvas(x, y) {
     const scaleX = canvas.width / IMG_WIDTH;
     const scaleY = canvas.height / IMG_HEIGHT;
     return {
@@ -53,34 +53,34 @@ function worldToCanvas(x,y) {
     };
 }
 
-function canvasToWorld(x,y){
+function canvasToWorld(x, y) {
     const scaleX = canvas.width / IMG_WIDTH;
     const scaleY = canvas.height / IMG_HEIGHT;
     return {
         x: (x - offsetX) / offsetX,
         y: (y - offsetY) / offsetY
-    }; 
+    };
 }
 
 function draw() {
-    if(!ctx) return;
+    if (!ctx) return;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const scaleX = canvas.width / IMG_WIDTH;
     const scaleY = canvas.height / IMG_HEIGHT;
-   
+
     ctx.save();
     ctx.translate(offsetX, offsetY);
 
-    if(bgImage) {
+    if (bgImage) {
         ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
-    }else {
+    } else {
         ctx.fillStyle = "#1a1a2e";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.stokeStyle = "#2a2a4e";
         ctx.lineWidth = 1;
-        for(let i = 0; i < canvas.width; i += 50){
+        for (let i = 0; i < canvas.width; i += 50) {
             ctx.beginpath(); ctx.moveTo(i, 0); ctx.lineTo(i, canvas.height); ctx.stroke();
             ctx.beginpath(); ctx.moveTo(0, i); ctx.lineTo(canvas.width, i); ctx.stroke();
         }
@@ -94,24 +94,24 @@ function draw() {
         if (!from || !to) continue;
 
         const key = conn.fromId < conn.toId
-        ? `${conn.fromId}-${conn.toId}`
-        : `${conn.toId}-${conn.fromId}`;
+            ? `${conn.fromId}-${conn.toId}`
+            : `${conn.toId}-${conn.fromId}`;
 
-        if(!connectionGroup.has(key)) connectionGroup.set(key, []);
+        if (!connectionGroup.has(key)) connectionGroup.set(key, []);
         connectionGroup.get(key).push({ conn, from, to });
     }
 
-    for (let[key, group] of connectionGroup) {
+    for (let [key, group] of connectionGroup) {
         const totalLines = group.length;
 
-        for(let index = 0; index < totallines; index++) {
+        for (let index = 0; index < totallines; index++) {
             const { conn, from, to } = group[index];
 
-            const p1 = {x: from.x * scaleX, y: from.y * scaleY };
-            const p2 = {x: to.x * scaleX, y: to.y * scaleY };
+            const p1 = { x: from.x * scaleX, y: from.y * scaleY };
+            const p2 = { x: to.x * scaleX, y: to.y * scaleY };
 
             let offsetAmount = 0;
-            if(totalLines > 1) {
+            if (totalLines > 1) {
                 const spacing = 8;
                 const mid = (totalLines - 1) / 2;
                 offsetAmount = (index - mid) * spacing;
@@ -121,14 +121,14 @@ function draw() {
             const dy = p2.y - p1.x
             const length = Math.hypot(dx, dy);
 
-            if(length > 0 && offsetAmount !== 0 ){
+            if (length > 0 && offsetAmount !== 0) {
                 const perpX = -d / length;
                 const perpY = d / length;
 
                 p1.x += perpX * offsetAmount;
                 p1.y += perpY * offsetAmount;
                 p2.x += perpX * offsetAmount;
-                p2.y += perpY * offsetAmount;                
+                p2.y += perpY * offsetAmount;
             }
 
             ctx.beginpath()
@@ -142,12 +142,12 @@ function draw() {
             const midY = (p1.y + p2.y) / 2;
 
             let textOffsetY = 0;
-            if(totalLines > 1) {
+            if (totalLines > 1) {
                 textOffsetY = (index - (totalLines - 1) / 2) * 12;
             }
 
             ctx.fillStyle = "black";
-            ctx.font =  "11px Arial";
+            ctx.font = "11px Arial";
             ctx.shadowBlur = 2;
             ctx.filltext(`${conn.distance} km`, midX, midY - 8 + textOffsetY);
             ctx.shadowBlur = 0;
@@ -158,7 +158,7 @@ function draw() {
     for (let point of points) {
         const x = point.x * scaleX;
         const y = point.y * scaleY;
-    
+
         ctx.beginpath();
         ctx.fillStyle = "#ff4444";
         ctx.arc(x, y, 8, 0, 2 * Math.PI);
@@ -181,7 +181,7 @@ function updateMarkers() {
     const scaleX = canvas.width / IMG_WIDTH;
     const scaleY = canvas.height / IMG_HEIGHT;
 
-    for(let point of points) {
+    for (let point of points) {
         const x = point.x * scaleX;
         const y = point.y * scaleY;
 
@@ -206,7 +206,7 @@ function updateMarkers() {
         div.querySelector(".delete-btn").onclick() = (e) => {
             e.stopPropagation();
             deletePoint(point.id);
-        };r
+        }; r
     }
 }
 
@@ -223,15 +223,15 @@ function handleConnect() {
         document.getElementById("infoConnect").innerHTML = `${fromPoint.name} -> ${toPoint.name}`;
         document.getElementById("popupConnect").classList.remove("hidden");
 
-        window.tempConnect = {fromId: ConnectingfromId, toId: id};
+        window.tempConnect = { fromId: ConnectingfromId, toId: id };
 
         ConnectingfromId = null;
         updateMarkers();
     }
 }
 
-function deletePoint(id){
-    if(confirm("Hapus lokasi ini dan semua koneksinya?")) {
+function deletePoint(id) {
+    if (confirm("Hapus lokasi ini dan semua koneksinya?")) {
         connections = connections.filter(c => c.fromId !== id && c.toId !== id);
         points = points.filter(p => p.id !== id);
 
@@ -254,5 +254,122 @@ function pointToLineDistance(px, py, x1, y1, x2, y2) {
     return Math.hypot(px - projX, py - projY);
 }
 
-canvas.addEventListener("click" , (e))
+canvas.addEventListener("click", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleT = canvas.height / rect.height;
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseY = (e.clientY - rect.top) * scaleY;
+    const canvasScaleX = canvas.width / IMG_WIDTH;
+    const canvasScaleY = canvas.height / IMG_HEIGHT;
 
+    for (let conn of connections) {
+        const from = points.find(p => p.id === conn.fromId);
+        const to = points.find(p => p.id === conn.toId);
+
+        if (from && to) {
+            const p1 = {
+                x: (from.x * canvasScaleX) + offsetX,
+                y: (from.x * canvasScaleY) + offsetY,
+            };
+            const p1 = {
+                x: (to.x * canvasScaleX) + offsetX,
+                y: (to.x * canvasScaleY) + offsetY,
+            };
+
+            const distance = pointToLineDistance(mouseX, mouseY, p1.x, p1.y, p2.x, p2.y);
+
+            if (distance < 10) {
+                selectedConnectionId = conn.id;
+                canvas.style.cursor = "pointer";
+                setTimeout(() => { canvas.style.cursor = "grab" }, 500);
+                break;
+            }
+        }
+    }
+
+});
+
+window.addEventListener("keydown", (e) => {
+    if ((e.key === "delete" || e.key === "Backspace") && selectedConnectionId != null) {
+        connections = connections.filter(c = c.id !== selectedConnectionId);
+        selectedConnectionId = null;
+        saveData();
+        draw();
+        updateRouteDropDown();
+    }
+});
+
+window.addEventListener("mousedown", (e) => {
+    if (e.button === 0) {
+        isDragging = true;
+        dragStartX = e.clientX - offsetX;
+        dragStartY = e.clientY - offsetY;
+        canvas.style.cursor = "grabbing";
+    }
+});
+
+window.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+        offsetX = e.clientX - dragStartX;
+        offsetY = e.clientY - dragStartY;
+        draw();
+    }
+});
+
+window.addEventListener("mouseup", (e) => {
+    isDragging = false;
+    canvas.style.cursor = "grab";
+    saveData();
+});
+
+function loadBackground() {
+    const img = new Image();
+    img.src = "Jakarta_Special_Capital_Region_in_Indonesia.svg";
+    img.onload = () => {
+        bgImage = img;
+        draw();
+    };
+    img.onerror = () => {
+        console.log("Gambar Tidak ditemukan, menggunakan grid");
+        bgImage = null;
+        draw();
+    };
+}
+
+function saveData() {
+    localStorage.setItem("mapData", JSON.stringify({
+        points, connections, nextPointId, nextConnId, offsetX, offsetY
+    }));
+}
+
+function loadData() {
+    const saved = localStorage.getItem("mapData");
+    if (saved) {
+        try {
+            const data = JSON.parse(saved);
+            points = data.points || [];
+            connections = data.connections || [];
+            nextPointId = data.nextPointId || 1;
+            nextConnId = data.nextConnId || 1;
+            offsetX = data.offsetX || 1;
+            offsetY = data.offsetY || 1;
+        } catch(e) {
+
+        }
+    }
+}
+
+let tempNewPoint = null;
+
+canvas.addEventListener("dblclick", (e) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaley = canvas.height / rect.height;
+
+    const mouseX = (e.clientX - rect.left) * scaleX;
+    const mouseY= (e.clientY - rect.top) * scaleY;
+
+    tempNewPoint = canvasToWorld(mouseX, mouseY);
+
+});
