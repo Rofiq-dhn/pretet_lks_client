@@ -9,6 +9,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* MAP CONTAINER - FULL LAYAR */
 .map-container {
     position: fixed;
     top: 0;
@@ -33,18 +34,19 @@ body {
     display: block;
 }
 
+/* FLOATING WINDOW */
 .floating-window {
     position: fixed;
     top: 50%;
-    left:50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     width: 380px;
     max-width: 90vw;
     background: #1e1e2e;
     border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
     z-index: 1000;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255,255,255,0.1);
 }
 
 .floating-window.hidden {
@@ -57,4 +59,297 @@ body {
     align-items: center;
     padding: 15px 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 16px 16px 0 0;
+    cursor: move;
+    user-select: none;
+}
+
+.window-header span {
+    font-weight: bold;
+    color: white;
+    font-size: 14px;
+}
+
+.close-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.close-btn:hover {
+    background: #ef4444;
+    transform: scale(1.05);
+}
+
+.window-body {
+    padding: 20px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 10px 12px;
+    background: #2d2d44;
+    border: 1px solid #3d3d5e;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.button-group button {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 12px;
+    transition: all 0.2s;
+}
+
+#cariRute {
+    background: #10b981;
+    color: white;
+}
+
+#cariRute:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+#urutWaktu, #urutBiaya {
+    background: #2d2d44;
+    color: white;
+}
+
+#urutWaktu.active, #urutBiaya.active {
+    background: #667eea;
+}
+
+.hasilRute {
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 10px;
+}
+
+.route-card {
+    background: #2d2d44;
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    border-left: 3px solid #10b981;
+}
+
+.route-card strong {
+    display: block;
+    margin-bottom: 8px;
+    color: #10b981;
+}
+
+.route-card hr {
+    margin: 8px 0;
+    border-color: #444;
+}
+
+/* TOMBOL BUKA PANEL */
+.open-route-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 100;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.2s;
+}
+
+.open-route-btn:hover {
+    transform: scale(1.05);
+}
+
+/* RESET DATA BUTTON */
+.reset-data-btn {
+    width: 100%;
+    padding: 10px;
+    margin-top: 15px;
+    background: #ef4444;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.reset-data-btn:hover {
+    background: #dc2626;
+    transform: scale(1.02);
+}
+
+/* POPUP UMUM */
+.popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.popup.hidden {
+    display: none;
+}
+
+.popup-box {
+    background: #2d2d44;
+    padding: 25px;
+    border-radius: 16px;
+    width: 320px;
+    color: white;
+}
+
+.popup-box h3 {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.popup-box input, .popup-box select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    background: #1e1e2e;
+    border: 1px solid #3d3d5e;
+    border-radius: 8px;
+    color: white;
+    font-size: 14px;
+}
+
+.popup-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.popup-buttons button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.popup-buttons button:first-child {
+    background: #10b981;
+    color: white;
+}
+
+.popup-buttons button:last-child {
+    background: #555;
+    color: white;
+}
+
+/* MARKER LABEL */
+.marker-label {
+    position: absolute;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(8px);
+    padding: 6px 12px;
+    border-radius: 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    z-index: 200;
+    border: 1px solid rgba(255,255,255,0.15);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    pointer-events: auto;
+}
+
+.marker-label .name {
+    color: #ff6b6b;
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+.marker-label button {
+    margin-left: 5px;
+    padding: 3px 8px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.marker-label .connect-btn {
+    background: #10b981;
+    color: white;
+}
+
+.marker-label .delete-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.marker-label .connecting-mode {
+    background: #f59e0b;
+    animation: blink 0.5s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #1e1e2e;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 3px;
 }

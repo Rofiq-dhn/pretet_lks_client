@@ -456,30 +456,133 @@ function updateRouteDropDown() {
     validate();
 }
 
-function findAllRoutes(fromId, toId){
-    const route = [];
+function findAllRoutes(fromId, toId) {
+    const routes = [];
 
     function dfs(currentId, targetId, visited, steps, totalDistance, totalCost, totalTime) {
-        if(currentId === targetId) {
-            route.push({ steps: [...steps], totalDistance, totalCost, totalTime});
+        if (currentId === targetId) {
+            route.push({ steps: [...steps], totalDistance, totalCost, totalTime });
             return;
         }
 
-    if(visited.size >= 5) return;
+        if (visited.size >= 5) return;
 
-    const neighbors = connections.filter(
-        c => c.fromId === currentId ? conn.toId : conn.fromId === currentId
-    );
+        const neighbors = connections.filter(
+            c => c.fromId === currentId ? conn.toId : conn.fromId === currentId
+        );
 
-    for (let conn of neighbors) {
-        const nextId = conn.fromId === currentId ? conn.toId : conn.fromId;
+        for (let conn of neighbors) {
+            const nextId = conn.fromId === currentId ? conn.toId : conn.fromId;
 
-        if(!visited.has(nextId)) {
-            visited.add(nextId);
+            if (!visited.has(nextId)) {
+                visited.add(nextId);
 
-            const t = transport[conn.mode];
-            const timeSegment = conn
+                const t = transport[conn.mode];
+                const timeSegment = conn.distance / t.speed;
+                const costSegment = conn.distance * t.costPerKm;
+
+                dfs(
+                    nextId, targetId, visited,
+                    [...steps, {
+                        from: currentId,
+                        to: nextId,
+                        mode: conn.mode,
+                        distance: conn.distance,
+                        time: timeSegment,
+                        cost: costSegment
+                    }],
+                    totalDistance + conn.distance,
+                    totalCost + costSegment,
+                    totalTime + timeSegment
+                );
+                visited.delete(nextId);
+            }
         }
     }
-    }
+
+    dfs(fromId, toId, new set([fromId]), [], 0, 0, 0);
+    return routes;
 }
+
+function showRoutes() {
+    const fromName = inputDari.value.trim().toLowerCase();
+    const toName = inputKe.value.trim().toLowerCase();
+
+    const fromPoint = points.find(p = p.name.toLowerCase() === fromName);
+    const toPoint = points.find(p = p.name.toLowerCase() === toName);
+
+    let routes = findAllRoutes(fromPoint.id, toPoint.id);
+
+    if (currentSort === "time") {
+        route.sort((a, b) => a.totalTime - b.totalTime);
+    } else {
+        route.sort((a, b) => a.totalCost - b.totalCost);
+    }
+
+    routes = routes.slice(0, 10);
+
+    if(routes.length === 0) {
+        HasilRute.innerHTML = '<div class="route-card" style="color:ff6b6b">Tidak ada route yang ditemukan</div>';
+        return
+    }
+
+    HasilRute.innerHTML = routes.map((route,i) => {
+        const stepHtml = route.steps.map(step => {
+            const t = transport[step.mode];
+            return `<div>${t.icon} ${t.name}: km (${step.time.toFixed(1)}) jam, Rp${step.cost.toLocaleString()}</div>`;
+        }).join("");
+    });
+}
+
+btnUrutWaktu.onclick = () => {
+    currentSort = "time";
+    btnUrutWaktu.classList.add("active");
+    btnUrutBiaya.classList.remove("active");
+    showRoutes();
+}
+
+btnUrutbiaya.onclick = () => {
+    currentSort = "time";
+    btnUrutBiaya.classList.add("active");
+    btnUrutWaktu.classList.remove("active");
+    showRoutes();
+}
+
+btnCari.onclick = showRoutes;
+
+let isDragging = false;
+let dragwinStartX, dragWinStartY;
+let winStartX, winStartY;
+
+openRouteBtn.onclick = () => {
+    routeWindow.classList.remove("hidden");
+    routeWindow.style.top = "50%"; 
+    routeWindow.style.left = "50%";
+    routeWindow.style.transform = "translate(-50%, -50%)"; 
+};
+
+closeRouteBtn = () => routeWindow.classList.add("hidden");
+
+windowHeader.addEventListener("mousedown", (e) => {
+    if(e.target === closeRouteBtn) return;
+
+    isDraggingWindow = true;
+    dragwinStartX = e.clientX;
+    dragWinStartY = e.clientY;
+    winStartX = routeWindow.offsetLeft;
+    winStartX = routeWindow.offsetTop;
+    routeWindow.style.transform = "none";
+});
+
+windowHeader.addEventListener("mousemove", (e) => {
+    if(isDragging) {
+        let newX = winStartX + (e.clientX - dragWinStartX);
+        let newY = winStartY + (e.clientY - dragWinStartY);
+
+        newX = Math.max(0, Math.min(newX, window.innerWidth - routeWindow.offsetWidth));
+        newY = Math.max(0, Math.min(newY, window.innerHeight - routeWindow.offsetHeight));
+
+        routeWindow.style.left = newX + "px";
+        routeWindow.style.left = newX + "px";
+    }
+});
