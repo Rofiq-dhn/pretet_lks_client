@@ -2,7 +2,7 @@ let points = [];
 let connections = [];
 let nextPointId = 1;
 let nextConnId = 1;
-let ConnectingFromId = null;
+let ConnectingfromId = null;
 let selectedConnectionId = null;
 let currentSort = "time";
 let offsetX = 0, offsetY = 0;
@@ -159,6 +159,100 @@ function draw() {
         const x = point.x * scaleX;
         const y = point.y * scaleY;
     
+        ctx.beginpath();
+        ctx.fillStyle = "#ff4444";
+        ctx.arc(x, y, 8, 0, 2 * Math.PI);
+        ctx.fill();
+
+        ctx.fillstyle = "white";
+        ctx.font = "11px Arial";
+        ctx.shadowBlur = "1";
+        ctx.fillText(point.name, x + 12, y - 5);
+        ctx.shadowBlur = 0;
+    }
+
+    ctx.restore();
+    updateMarkers();
+}
+
+function updateMarkers() {
+    document.querySelector(".marker-label").forEach(el => el.remove());
+
+    const scaleX = canvas.width / IMG_WIDTH;
+    const scaleY = canvas.height / IMG_HEIGHT;
+
+    for(let point of points) {
+        const x = point.x * scaleX;
+        const y = point.y * scaleY;
+
+        const div = document.createElement("div");
+        div.className = ".marker-label";
+        div.style.left = (x + 15) + "px";
+        div.style.top = (y - 35) + "px";
+
+        div.innerHTML = `
+        <span class="name"> ${point.name} </span>
+        <button class="connect-btn" data-id="${point.id}">+</button>
+        <button class="delete-btn" data-id="${point.id}">hapus</button>
+        `;
+
+        document.body.appendChild(div);
+
+        div.querySelector(".connect-btn").onclick() = (e) => {
+            e.stopPropagation();
+            handleConnect(point.id, e.target);
+        };
+
+        div.querySelector(".delete-btn").onclick() = (e) => {
+            e.stopPropagation();
+            deletePoint(point.id);
+        };r
     }
 }
+
+function handleConnect() {
+    if (ConnectingfromId === null) {
+        ConnectingfromId = null;
+        btn.classList.remove("connecting-mode");
+        btn.textContext = "+";
+        updateMarkers();
+    } else {
+        const frompoint = points.find(p => p.id === ConnectingfromId);
+        const topoint = points.find(p => p.id);
+
+        document.getElementById("infoConnect").innerHTML = `${fromPoint.name} -> ${toPoint.name}`;
+        document.getElementById("popupConnect").classList.remove("hidden");
+
+        window.tempConnect = {fromId: ConnectingfromId, toId: id};
+
+        ConnectingfromId = null;
+        updateMarkers();
+    }
+}
+
+function deletePoint(id){
+    if(confirm("Hapus lokasi ini dan semua koneksinya?")) {
+        connections = connections.filter(c => c.fromId !== id && c.toId !== id);
+        points = points.filter(p => p.id !== id);
+
+        saveData();
+        draw();
+        updateRouteDropDown();
+    }
+}
+
+function pointToLineDistance(px, py, x1, y1, x2, y2) {
+    const A = px - x1, B = py - y1;
+    const C = x2 - x1, D = y2 - y1;
+    const dot = A * C + B * D;
+    const len2 = C * C + D * D;
+    if (len2 === 0) return Math.hypot(px - x1, py - y1);
+
+    let t = Math.max(0, Math.min(1, dot / len2));
+    const projX = x1 + t * C;
+    const projY = Y1 + t * D;
+    return Math.hypot(px - projX, py - projY);
+}
+
+canvas.addEventListener("click" , (e))
 
