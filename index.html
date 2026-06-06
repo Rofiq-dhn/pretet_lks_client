@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LKS - latihan - client</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="map-container">
+        <canvas id="mapCanvas"></canvas>
+    </div>
+
+    <div id="routeWindow" class="floating-window hidden">
+        <div class="window-header" id="windowHeader">
+            <span>Find Route</span>
+            <button id="closeRouteBtn" class="close-btn">X</button>
+        </div>
+        <div class="window-body">
+            <div class="input-group">
+                <label>Dari:</label>
+                <input type="text" id="dari" placeholder="Dari ....">
+            </div>
+            <div class="input-group">
+                <label>Ke:</label>
+                <input type="text" id="ke" placeholder="Ke ....">
+            </div>
+            <div class="button-group">
+                <button id="cariRute" disabled>Cari Rute</button>
+                <button id="urutWaktu" class="active">Tercepat</button>
+                <button id="urutBiaya">Termurah</button>
+            </div>
+            <div id="hasilRute" class="hasilRute"></div>
+            <div id="resetSemuaBtn" class="reset-data-btn">Reset Semua data</div>
+        </div>
+    </div>
+
+    <button id="openRouteBtn" class="open-route-btn">Cari Rute</button>
+
+    <div id="popupTambah" class="popup hidden">
+        <div class="popup-box">
+            <h3>Tambah Lokasi</h3>
+        </div>
+        <input type="text" id="namaLokasi" placeholder="Masukkan Nama Lokasi">
+        <div class="popup-buttons">
+            <button id="btnTambah">Tambah</button>
+            <button id="btnBatal">Batal</button>
+        </div>
+    </div>
+
+    <div id="popupConnect" class="popup hidden">
+        <div class="popup-box">
+            <h3>Hubungkan Lokasi</h3>
+            <p id="infoConnect"></p>
+            <input type="number" id="inputJarak" placeholder="Jarak (KM)">
+            <select id="inputMode">
+                <option value="train"> Kereta (120km/jam) - Rp500/km</option>
+                <option value="bus">Bus (80km/jam) - Rp100/km</option>
+                <option value="plane">Pesawat (800km/jam) - 1000/km</option>
+            </select>
+            <div class="popup-buttons">
+                <button id="btnConnect">HUBUNGKAN</button>
+                <button id="btnBatalConnect">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" ></script>
+</body>
+
+</html>
